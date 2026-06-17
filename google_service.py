@@ -1,9 +1,11 @@
-import os.path
+import json
 import base64
 from email.message import EmailMessage
+
+import streamlit as st
+
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
@@ -19,23 +21,21 @@ class GoogleService:
         self.calendar_service = build('calendar', 'v3', credentials=self.creds)
         self.gmail_service = build('gmail', 'v1', credentials=self.creds)
 
-    def _authenticate(self):
-        creds = None
-        if os.path.exists('token.json'):
-            creds = Credentials.from_authorized_user_file('token.json', SCOPES)
-        
-        if not creds or not creds.valid:
-            if creds and creds.expired and creds.refresh_token:
-                creds.refresh(Request())
-            else:
-                if not os.path.exists('credentials.json'):
-                    raise FileNotFoundError("Arquivo 'credentials.json' não encontrado. Siga o guia no README.")
-                flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES)
-                creds = flow.run_local_server(port=0)
-            
-            with open('token.json', 'w') as token:
-                token.write(creds.to_json())
-        return creds
+ def _authenticate(self):
+    import json
+    import streamlit as st
+
+    token_json = st.secrets["GOOGLE_TOKEN_JSON"]
+
+    creds = Credentials.from_authorized_user_info(
+        json.loads(token_json),
+        SCOPES
+    )
+
+    if creds.expired and creds.refresh_token:
+        creds.refresh(Request())
+
+    return creds
 
     def add_event(self, summary, start_time, end_time, description=""):
         """Adiciona evento ao Google Calendar"""
