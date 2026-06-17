@@ -146,12 +146,12 @@ elif menu == "⚙️ Integrações":
     with col2:
         st.subheader("☁️ Google API")
 
-    if get_secret("GOOGLE_TOKEN_JSON"):
-        st.success("✅ Token encontrado")
+    if get_secret("GOOGLE_SERVICE_ACCOUNT"):
+        st.success("✅ Google Service Account configurado")
 
         if st.session_state.google_service:
             st.success("✅ Autenticado")
         else:
             st.warning("⚠️ Token encontrado mas não autenticado")
     else:
-        st.error("❌ GOOGLE_TOKEN_JSON não configurado")
+        st.error("❌ GOOGLE_SERVICE_ACCOUNT não configurado")
