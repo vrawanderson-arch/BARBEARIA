@@ -39,8 +39,22 @@ def create_advanced_dashboard(df_agendamentos):
     )
 
     # 3. Gráfico de Linha: Evolução Temporal
-    df_agendamentos['data_curta'] = pd.to_datetime(df_agendamentos['data']).dt.date
-    evolucao = df_agendamentos.groupby('data_curta').size().reset_index(name='quantidade')
+    # 3. Gráfico de Linha: Evolução Temporal
+
+df_agendamentos['data_curta'] = pd.to_datetime(
+    df_agendamentos['data'],
+    format='mixed',
+    errors='coerce'
+).dt.date
+
+df_agendamentos = df_agendamentos.dropna(subset=['data_curta'])
+
+evolucao = (
+    df_agendamentos
+    .groupby('data_curta')
+    .size()
+    .reset_index(name='quantidade')
+)
     fig_evolucao = px.line(
         evolucao, 
         x='data_curta', 
