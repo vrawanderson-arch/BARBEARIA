@@ -144,7 +144,7 @@ elif menu == "⚙️ Integrações":
             st.error("❌ Token não encontrado")
 
     with col2:
-    st.subheader("☁️ Google API")
+        st.subheader("☁️ Google API")
 
     if get_secret("GOOGLE_TOKEN_JSON"):
         st.success("✅ Token encontrado")
