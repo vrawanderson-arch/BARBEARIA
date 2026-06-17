@@ -14,7 +14,7 @@ SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets"
 ]
 
-CALENDAR_ID = "primary"
+CALENDAR_ID = st.secrets.get("GOOGLE_CALENDAR_ID", "primary")
 
 
 class GoogleService:
@@ -45,9 +45,12 @@ class GoogleService:
 
         try:
 
-            service_account_info = json.loads(
-                st.secrets["GOOGLE_SERVICE_ACCOUNT"]
-            )
+            secret = st.secrets["GOOGLE_SERVICE_ACCOUNT"]
+
+            if isinstance(secret, str):
+                service_account_info = json.loads(secret)
+            else:
+                service_account_info = dict(secret)
 
             creds = service_account.Credentials.from_service_account_info(
                 service_account_info,

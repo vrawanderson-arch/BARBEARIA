@@ -69,11 +69,12 @@ if "google_service" not in st.session_state:
 
     except Exception as e:
 
+        import traceback
+
         st.session_state.google_service = None
 
-        st.sidebar.error(
-            f"Erro Google: {str(e)}"
-        )
+        st.error(f"ERRO GOOGLE: {e}")
+        st.code(traceback.format_exc())
 
 # ==================================================
 # AGENDAMENTOS INICIAIS
@@ -374,7 +375,7 @@ elif menu == "💬 Chat IA":
             try:
 
                 model = genai.GenerativeModel(
-                    "gemini-pro"
+                    "gemini-1.5-flash"
                 )
 
                 response = (
@@ -482,8 +483,10 @@ elif menu == "⚙️ Integrações":
             resultado = (
                 st.session_state.google_service
                 .calendar_service
-                .calendarList()
-                .list()
+                .calendars()
+                .get(
+                    calendarId=st.secrets.get("GOOGLE_CALENDAR_ID","primary")
+                )
                 .execute()
             )
 

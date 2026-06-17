@@ -13,7 +13,7 @@ class SalonTelegramBot:
         self.salao_info = salao_info
         if gemini_key:
             genai.configure(api_key=gemini_key)
-            self.model = genai.GenerativeModel('gemini-pro')
+            self.model = genai.GenerativeModel('gemini-1.5-flash')
         else:
             self.model = None
 
