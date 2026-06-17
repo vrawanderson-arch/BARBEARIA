@@ -14,7 +14,7 @@ SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets"
 ]
 
-CALENDAR_ID = "primary"
+CALENDAR_ID = "vrawanderson@gmail.com"
 
 
 class GoogleService:
