@@ -14,12 +14,13 @@ SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets"
 ]
 
-CALENDAR_ID = "vrawanderson@gmail.com"
+CALENDAR_ID = "primary"
 
 
 class GoogleService:
 
     def __init__(self):
+
         self.creds = self._authenticate()
 
         self.calendar_service = build(
@@ -42,18 +43,31 @@ class GoogleService:
 
     def _authenticate(self):
 
-        service_account_info = json.loads(
-            st.secrets["GOOGLE_SERVICE_ACCOUNT"]
-        )
+        try:
 
-        creds = service_account.Credentials.from_service_account_info(
-            service_account_info,
-            scopes=SCOPES
-        )
+            service_account_info = json.loads(
+                st.secrets["GOOGLE_SERVICE_ACCOUNT"]
+            )
 
-        return creds
+            creds = service_account.Credentials.from_service_account_info(
+                service_account_info,
+                scopes=SCOPES
+            )
 
-    def add_event(self, summary, start_time, end_time, description=""):
+            return creds
+
+        except Exception as e:
+            raise Exception(
+                f"Erro autenticação Google: {str(e)}"
+            )
+
+    def add_event(
+        self,
+        summary,
+        start_time,
+        end_time,
+        description=""
+    ):
 
         event = {
             "summary": summary,
@@ -70,7 +84,7 @@ class GoogleService:
 
         try:
 
-            event = (
+            created_event = (
                 self.calendar_service.events()
                 .insert(
                     calendarId=CALENDAR_ID,
@@ -79,19 +93,27 @@ class GoogleService:
                 .execute()
             )
 
-            return event.get("htmlLink")
+            return created_event.get("htmlLink")
 
-        except HttpError as error:
-            print(error)
+        except HttpError as e:
+
+            print(f"Erro Calendar: {e}")
+
             return None
 
-    def send_email(self, to, subject, body):
+    def send_email(
+        self,
+        to,
+        subject,
+        body
+    ):
 
         try:
 
             message = EmailMessage()
 
             message.set_content(body)
+
             message["To"] = to
             message["From"] = "me"
             message["Subject"] = subject
@@ -100,20 +122,24 @@ class GoogleService:
                 message.as_bytes()
             ).decode()
 
-            send_message = (
+            sent_message = (
                 self.gmail_service.users()
                 .messages()
                 .send(
                     userId="me",
-                    body={"raw": encoded_message}
+                    body={
+                        "raw": encoded_message
+                    }
                 )
                 .execute()
             )
 
-            return send_message
+            return sent_message
 
-        except HttpError as error:
-            print(error)
+        except HttpError as e:
+
+            print(f"Erro Gmail: {e}")
+
             return None
 
     def salvar_agendamento_planilha(
@@ -138,9 +164,19 @@ class GoogleService:
             "values": values
         }
 
-        self.sheets_service.spreadsheets().values().append(
-            spreadsheetId=spreadsheet_id,
-            range="A:D",
-            valueInputOption="RAW",
-            body=body
-        ).execute()
+        try:
+
+            self.sheets_service.spreadsheets().values().append(
+                spreadsheetId=spreadsheet_id,
+                range="A:D",
+                valueInputOption="RAW",
+                body=body
+            ).execute()
+
+            return True
+
+        except HttpError as e:
+
+            print(f"Erro Sheets: {e}")
+
+            return False
