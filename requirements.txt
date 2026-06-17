@@ -1,0 +1,10 @@
+streamlit
+pandas
+google-generativeai
+python-dotenv
+python-telegram-bot
+google-auth-oauthlib
+google-auth-httplib2
+google-api-python-client
+plotly
+openpyxl
