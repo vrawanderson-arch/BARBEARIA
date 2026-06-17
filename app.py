@@ -7,8 +7,8 @@ from dotenv import load_dotenv
 import google.generativeai as genai
 
 # Importações dos novos módulos
-from utils.dashboard_charts import create_advanced_dashboard
-from integrations.google_service import GoogleService
+from dashboard_charts import create_advanced_dashboard
+from google_service import GoogleService
 
 # Configuração da página
 st.set_page_config(
