@@ -144,14 +144,14 @@ elif menu == "⚙️ Integrações":
             st.error("❌ Token não encontrado")
 
     with col2:
-        st.subheader("☁️ Google API")
-        if os.path.exists('credentials.json') or get_secret("GOOGLE_CREDENTIALS_JSON"):
-            st.success("✅ Credenciais encontradas")
-            if st.session_state.google_service:
-                st.success("✅ Autenticado")
-            else:
-                if st.button("Tentar Autenticar Google"):
-                    st.session_state.google_service = GoogleService()
-                    st.rerun()
+    st.subheader("☁️ Google API")
+
+    if get_secret("GOOGLE_TOKEN_JSON"):
+        st.success("✅ Credenciais encontradas")
+
+        if st.session_state.google_service:
+            st.success("✅ Autenticado")
         else:
-            st.warning("⚠️ Aguardando GOOGLE_CREDENTIALS_JSON nos Secrets")
+            st.error("❌ Não autenticado")
+    else:
+        st.warning("⚠️ Aguardando GOOGLE_TOKEN_JSON nos Secrets")
