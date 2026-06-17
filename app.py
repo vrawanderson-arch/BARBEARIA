@@ -42,19 +42,14 @@ if GEMINI_KEY:
 # No Cloud, colamos o conteúdo do credentials.json no st.secrets["GOOGLE_CREDENTIALS_JSON"]
 if 'google_service' not in st.session_state:
     try:
-        google_creds_json = get_secret("GOOGLE_CREDENTIALS_JSON")
-        if google_creds_json:
-            # Cria arquivo temporário se estiver no Cloud para a lib do Google ler
-            with open('credentials.json', 'w') as f:
-                f.write(google_creds_json if isinstance(google_creds_json, str) else json.dumps(dict(google_creds_json)))
-        
-        if os.path.exists('credentials.json'):
+        if get_secret("GOOGLE_TOKEN_JSON"):
             st.session_state.google_service = GoogleService()
         else:
             st.session_state.google_service = None
+
     except Exception as e:
         st.session_state.google_service = None
-        st.sidebar.warning(f"Google Service aguardando configuração: {e}")
+        st.sidebar.warning(f"Google Service: {e}")
 
 # Inicializar Agendamentos
 if 'agendamentos' not in st.session_state:
